@@ -1,0 +1,1930 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://tang-jiapeng.github.io/db/cmu15445/L8/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../logo.ico">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.25">
+    
+    
+      
+        <title>L8 - 0X10CC's notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Serif SC";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../../from_oi_wiki/css/extra.css?v=13">
+    
+      <link rel="stylesheet" href="../../../css/status.css">
+    
+      <link rel="stylesheet" href="../../../css/neoteroi-mkdocs.css">
+    
+      <link rel="stylesheet" href="../../../termynal.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-JT9BRCXKJJ"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-JT9BRCXKJJ",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-JT9BRCXKJJ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#additional-index-usage" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="0X10CC&#39;s notes" class="md-header__button md-logo" aria-label="0X10CC's notes" data-md-component="logo">
+      
+  <img src="../../../logo.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            0X10CC's notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              L8
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/tang-jiapeng/tang-jiapeng.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tang-jiapeng.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+    
+  
+  🏡 Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cpp/" class="md-tabs__link">
+          
+  
+    
+  
+  C++
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../leetcode/" class="md-tabs__link">
+          
+  
+    
+  
+  Leetcode
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../core/" class="md-tabs__link">
+          
+  
+    
+  
+  核心知识
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../trans/" class="md-tabs__link">
+          
+  
+    
+  
+  文档翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="0X10CC&#39;s notes" class="md-nav__button md-logo" aria-label="0X10CC's notes" data-md-component="logo">
+      
+  <img src="../../../logo.ico" alt="logo">
+
+    </a>
+    0X10CC's notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/tang-jiapeng/tang-jiapeng.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tang-jiapeng.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../.." class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    🏡 Home
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            🏡 Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../cpp/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    C++
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            C++
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    C++零碎杂记
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            C++零碎杂记
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/%E9%A1%B6%E5%B1%82const%E4%B8%8E%E5%BA%95%E5%B1%82const/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    顶层const与底层const
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    值类型与右值引用
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88%E4%B8%8E%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    数组指针与函数指针
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/C%2B%2B%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%B8%83%E5%B1%80/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    C++类对象布局
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/C%2B%2B%E4%B8%AD%E7%9A%84%E5%A4%9A%E6%80%81%E4%B8%8ERTTI/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    C++中的多态与RTTI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Effective Modern C++
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Effective Modern C++
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item1：理解模板类型推导
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item2：理解auto类型推导
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item3：理解decltype
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item7：区别使用()和{}创建对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item9：优先考虑别名声明而非typedef
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item23/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item23：理解std::move和std::forward
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../leetcode/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Leetcode
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Leetcode
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Contests
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Contests
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../leetcode/contests/393/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第 393 场周赛
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    每日一题
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            每日一题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../leetcode/daily/2024-5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2024年5月
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../core/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    核心知识
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            核心知识
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../core/nju-compiler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NJU编译原理笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../trans/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    文档翻译
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            文档翻译
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kaleidoscope
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Kaleidoscope
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kaleidoscope language and Lexer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implementing a Parser and AST
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code generation to LLVM IR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding JIT and Optimizer Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extending the Language：Control Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extending the Language：User-defined Operators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extending the Language：Mutable Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compiling to Object Files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Debug Information
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../trans/kaleidoscope/chapter10/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Conclusion and other tidbits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#additional-index-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Index Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#radix-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      Radix Tree
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Radix Tree">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trie-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      Trie Tree
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radix-tree_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Radix Tree
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inverted-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inverted Indexes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>L8</h1>
+
+<div style="margin-top: -30px; font-size: 0.75em; opacity: 0.7;">
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10h-2a8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8V2m6.78 1a.69.69 0 0 0-.48.2l-1.22 1.21 2.5 2.5L20.8 5.7c.26-.26.26-.7 0-.95L19.25 3.2c-.13-.13-.3-.2-.47-.2m-2.41 2.12L9 12.5V15h2.5l7.37-7.38-2.5-2.5Z"/></svg></span> 约 2586 个字 <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20c4.42 0 8-3.58 8-8s-3.58-8-8-8-8 3.58-8 8 3.58 8 8 8m0-18c5.5 0 10 4.5 10 10s-4.5 10-10 10C6.47 22 2 17.5 2 12S6.5 2 12 2m.5 11H11V7h1.5v4.26l3.7-2.13.75 1.3L12.5 13Z"/></svg></span> 预计阅读时间 9 分钟</p>
+</div>
+<h2 id="additional-index-usage">Additional Index Usage<a class="headerlink" href="#additional-index-usage" title="Permanent link">&para;</a></h2>
+<p><strong>隐式索引</strong>：大多数 DBMS 将自动创建索引来强制执行完整性约束（Eg: 主键、唯一性约束），除了参照性约束（外键）。</p>
+<ul>
+<li><strong>当声明一个完整性约束时，DBMS会自动创建一个索引</strong>。 否则唯一能执行该完整性约束的方式就是循序扫描。🌰 若要保证主键的唯一性，若不使用索引，插入数据时必须扫描每个 tuple 来保证所有 tuple 的 key 都不同。</li>
+<li>所有DBMS都会自动为主键做唯一性约束，因此会自动创建索引。但 <strong>对参照完整性约束（外键），则不会自动创建索引</strong>。</li>
+</ul>
+<p><center><img alt="2" src="../image/image55.png" width="700" /></center></p>
+<p><strong>部分索引</strong>：在整个表的一个子集上创建索引。这潜在地减少了规模和维护它的开销。</p>
+<ul>
+<li>这种方式非常常见 🌰 可以通过不同索引将不同日期范围的数据分开，在每个月份上建立索引，这样可以以想要的顺序在该月份中进行快速查找。</li>
+<li>使用一个部分索引可以避免一堆不需要的数据去污染 Buffer Pool，同时树的高度也会变得更低，这样就有利于更快的查找。</li>
+</ul>
+<p><center><img alt="2" src="../image/image56.png" width="300" /></center></p>
+<p><strong>覆盖索引</strong>：若处理查询所需的所有属性都能在索引中获取，则 DBMS 无需再检索 tuple。DBMS 可直接根据索引中可用的数据完成整个查询。</p>
+<ul>
+<li>这减少了对 Buffer Pool 资源的争用。</li>
+<li>无需将一个索引声明为覆盖索引，DBMS 会自动帮你做这件事。</li>
+<li>👆这个查询就是个覆盖索引，因为 idx_foo 索引有a、b属性，查询只想获得b属性，则可直接从索引中获取，而无需通过索引得到 record id 再去 Buffer Pool 中获取对应的 tuple 再得到 b（可能多一次磁盘I/O）。</li>
+</ul>
+<p><strong>索引包含列</strong>：在索引中嵌入额外的列以支持仅索引的查询。额外的属性只保存在 leaf node，不会保存在 inner node，inner node 仍只有 search key 需要的属性。</p>
+<ul>
+<li>因为额外的属性不在 inner node 中，因此不会让索引整体的 size 变得很大。</li>
+</ul>
+<p><center><img alt="2" src="../image/image57.png" width="700" /></center></p>
+<p><strong>函数/表达式索引</strong>：将函数或表达式的输出存储为 key，而不是原始值。即通过 key 衍生出来的某些值而不是通过 key 自身的值来进行查找。</p>
+<ul>
+<li>识别哪些查询可以使用该索引是 DBMS 的工作。</li>
+</ul>
+<p><center><img alt="2" src="../image/image58.png" width="700" /></center></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>所有DBMS支持隐式索引，大部分支持部分索引，一部分支持覆盖索引，支持索引包含列的更少。</p>
+<p>创建索引后，DBMS可以自己从不同的各种索引中找到最好的访问方法并使用。</p>
+<p><strong>创建索引时，DBMS默认使用 B+tree，除非强制指定索引类型，比如 Hash Table</strong>。</p>
+</div>
+<h2 id="radix-tree">Radix Tree<a class="headerlink" href="#radix-tree" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>B+树存在的问题：</p>
+<ol>
+<li>B+树中 key 会被多次复制，要判断某个key是否存在于表中，必须遍历到 leaf node。因为 inner node 可能会保存那些不再存在于 tree 中的 key 的拷贝，它们要用这些 key 当作路标。</li>
+<li>如果 Buffer Pool 中并没有缓存要找的 leaf node 所在的 page，则会出现 page miss，那么在向下遍历B+树时，就会得去磁盘上对每个结点进行查找。</li>
+</ol>
+<p>因此若能不遍历到底部的 leaf node，在树的顶部就能知道 key 是否存在于表中的话，就很nice。</p>
+<p>——Trie Index</p>
+</div>
+<h3 id="trie-tree">Trie Tree<a class="headerlink" href="#trie-tree" title="Permanent link">&para;</a></h3>
+<p><code>Trie (Retrieval Tree)</code>：又称 Digital Search Tree, Rrefix Tree。是一种树形数据结构，比B+树更古老。</p>
+<ul>
+<li><strong>思路</strong> ：将所有的 key 分解为 digit（key 中某些原子子集，如一个 byte or bit 之类的），将分解后的 digit 存于 tree 的不同层，若某层的 digit 重复只需保存一次。</li>
+<li><strong>tree 不同的向下遍历 digit 的路径对应一个 key</strong>。</li>
+</ul>
+<p><center><img alt="2" src="../image/image59.png" width="200" /></center></p>
+<p>Trie Tree 的特点：</p>
+<ol>
+<li>Trie Tree 的形状取决于 key 的分布以及长度，它是一个确定的数据结构，不管插入 key 的顺序如何，最终都会得到相同的物理数据结构（即结点布局）<strong>VS.</strong> B+ Tree 的高度取决于 key 的数目，且结点布局与 key 的插入顺序有关，这取决于 B+Tree 如何进行拆分与合并</li>
+<li>Trie Tree 不用进行重新平衡（垂直层面可以进行 rebalance，水平层面不需要）<strong>VS.</strong> B+Tree 需要重新平衡</li>
+<li>Tire Tree 中操作复杂度都为 <span class="arithmatex">\(O(K)\)</span>，K 为 key 的长度  <strong>VS.</strong> B+Tree 中操作复杂度都为 <span class="arithmatex">\(O(logn)\)</span></li>
+<li>Trie Tree 的点查询速度快于 B+Tree，但扫描速度慢于 B+Tree，因为 Tire Tree 要一个个通过遍历回溯重建 key 而 B+Tree 可以直接沿着 leaf node 扫描。</li>
+</ol>
+<p><code>span</code>：树枝向外分叉的个数，即在树的每层每个节点中 digit 的个数。某层的每个存在的 digit 会有指向其他分支的指针（leaf node 的 digit 指向 tuple），若 digit 不存在则指针处存 null 或其他类似的东西。</p>
+<ul>
+<li>span 被用来约定是否对每个节点进行扇出（fan-out）操作</li>
+<li>n-way Trie = Fan-Out of n（n 路 Trie 表示每个节点最多有 n 条路线，fan-out 为 n，Trie 每层能保存 n 个 digit）</li>
+</ul>
+<p><center><img alt="2" src="../image/image60.png" width="700" /></center></p>
+<p>👆优化思路：</p>
+<ol>
+<li>无需使用空间来标记0和1，直接保存对应的指针。若bit=0,offset=0;若bit=1,offset=1<ul>
+<li>水平压缩，减小每个 Trie 结点的 size。</li>
+</ul>
+</li>
+<li>当只有一个子结点时，省略所有之后的结点。【又被称为 Patricia Tree、<strong>Radix Tree</strong> 】<ul>
+<li>垂直压缩，移除了无用分支路径。</li>
+<li>可能会产生错误，DBMS 经常需要原始的 tuple 看是否能 match key。</li>
+</ul>
+</li>
+</ol>
+<p><center><img alt="2" src="../image/image61.png" width="500" /></center></p>
+<h3 id="radix-tree_1">Radix Tree<a class="headerlink" href="#radix-tree_1" title="Permanent link">&para;</a></h3>
+<p><code>Radix Tree</code>：Trie 数据结构的变体【Trie的垂直压缩】。它使用 key 的 digit 逐个检查前缀，而不是比较整个 key。它与 Trie 的不同之处在于，Tadix Tree 的 node 不是 key 中的每个元素，而是表示 key 不同的最小前缀。</p>
+<ul>
+<li>树的高度取决于 key 的长度，而不是像B+树那样取决于 key 的数量。</li>
+<li>到 leaf node 的路径表示 leaf 的 key。</li>
+</ul>
+<blockquote>
+<p>Radix tree 是 Trie 的一种特殊版本，没人会在数据库中使用 Trie，用的都是 Radix Tree。</p>
+</blockquote>
+<p>Radix Tree 不同于 B+树，没有标准的方式进行维护，可以采用不同的实现。这里展示一种维护的方式：</p>
+<p><center><img alt="2" src="../image/image62.png" width="600" /></center></p>
+<p>并不是所有的属性类型都可以分解为 radix tree 的二进制可比较数字，许多类型的 key 都需要特殊处理：</p>
+<ul>
+<li>Unsigned Integers：对little endian mechines 要把 bits 翻转一遍</li>
+<li>Signed Integers：需要翻转 two’s-complement 从而使得负数小于正数</li>
+<li>Floats：需要分成多个组（neg vs. pos, normalized vs. denormalized），然后存储成 unsigned integer</li>
+<li>Compound：分别转化各个 attributes 然后组合起来</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>在设计计算机系统的时候，有两种处理内存中数据的方法：</p>
+<ul>
+<li>大端模式 (big-endian)：内存高地址存数据低字节，低地址存高字节。</li>
+<li>小端模式 (little-endian)：内存高地址存数据高字节，低地址存低字节。</li>
+</ul>
+</div>
+<p><center><img alt="2" src="../image/image63.png" width="500" /></center></p>
+<h2 id="inverted-indexes">Inverted Indexes<a class="headerlink" href="#inverted-indexes" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>尽管 tree index 非常有利于点查询和范围查询，如：</p>
+<ul>
+<li>Find all customers in the 15217 zip code</li>
+<li>Find all orders between June 2018 and September 2018</li>
+</ul>
+<p>但对于 keyword search，tree index 就显得无能为力，因为要找的是某个属性中的一个子元素。如：</p>
+<ul>
+<li>Find all Wikipedia articles that contain the word "Pavlo"</li>
+</ul>
+</div>
+<p>对 B+Tree、Hash Table 而言，进行关键词搜索的效果都不好。因为关键词搜索是模糊查找，即要找某个属性中的一个子元素。Hash Table 必须使用完整 key 进行搜索；B+Tree 虽然能使用部分 key 进行搜索，但这指的是它将多个属性作为 key，能使用单个或对个属性（部分 key）进行搜索，这要求单个属性的值必须是完整的，不能使用单个属性的一部分进行查找。—— Inverted Indexes</p>
+<p><strong>倒排索引(Inverted Indexes)</strong>：存储 word 到 record 的映射，这些 record 的目标属性包含了这些 word。</p>
+<ul>
+<li>又称为：全文搜索索引 (full-text search index)、concordance。</li>
+<li>大多数主要的 DBMS 本身都支持倒排索引，但在一些专门的 DBMS 中，倒排索引是唯一可用的表索引数据结构。</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>全文搜索数据库有很多，比如 ElasticSearch，它是建立在 Lucene 之上的 DBMS，Lucene 是由一个发明了 Hadoop 的人编写的，ElasticSearch 为搜索时用到的索引提供了一个服务端接口工具。
+Xapain 是一个 C++ 标准库，也是用来进行全文搜索和索引查找的，比 MySQL 的全文搜索索引效果好。</p>
+</div>
+<p><strong>查询类型</strong> （这些都无法在在B+树运行，但可在倒排索引中运行）：</p>
+<ul>
+<li>词组搜索：查找包含给定顺序的 words list 的 record。</li>
+<li>近似搜索：查找两个 words 在 n 个 words 内出现的 record。</li>
+<li>通配符搜索：查找包含匹配某些模式（例如，正则表达式）的 words 的 record。</li>
+</ul>
+<p><strong>设计决策</strong> （如何构建倒排索引）：</p>
+<ol>
+<li>存储什么：索引至少需要存储每条 record 中包含的 words（用标点符号分隔）。它还可以包含其他信息，如词频、位置和其他元数据。<ul>
+<li>最简单的方式就是将这个单词映射到一个 record ID 上，也可以将这个单词周围的其他单词也加进去，这会决定我所能⽀持的查询的复杂程度有多复杂。</li>
+</ul>
+</li>
+<li>何时更新：每次修改表的时候更新倒排索引既昂贵又缓慢。因此，大多数DBMS将维护辅助数据结构来 “stage” updates，然后批量更新索引。</li>
+</ol>
+<p>更多倒排索引有关信息，可查看 CMU 11-442/11-642 中搜索引擎的内容。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>PS：除了 B+Tree 和 Hast Table 外，还存在许多其他可⽤的数据库索引，它们可以做除了点查询以及范围查询外的查询。比如：</p>
+<ul>
+<li>geo-spatial index（地理空间索引）：允许进⾏多维度查找，可应用在几何空间场景，常见于视频/图像数据库。数据结构有：R-Tree, Quad-Tree, KD-Tree。</li>
+</ul>
+<p>在⼤多数时候，B+Tree 都能满足我们的需要，它能⽤于索引，并且非常弹性化。</p>
+</div>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最后更新">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-05-31T07:58:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-31</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="创建日期">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2Z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-05-31T07:58:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-31</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+<div id="__comments">
+
+<h3>颜色主题调整</h3>
+
+<!-- <div class="tx-switch">
+<button data-md-color-scheme="default"><code>default</code></button>
+<button data-md-color-scheme="slate"><code>slate</code></button>
+</div>
+
+<script>
+var buttons = document.querySelectorAll("button[data-md-color-scheme]")
+buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+        var attr = this.getAttribute("data-md-color-scheme")
+        document.body.setAttribute("data-md-color-scheme", attr)
+        localStorage.setItem("data-md-color-scheme",attr);
+        updateScheme();
+        })
+})
+</script> -->
+
+<div class="tx-switch">
+<button class="button1" data-md-color-primary="red" style="background-color:red">red</button>
+<button class="button1" data-md-color-primary="pink" style="background-color:pink;color:black">pink</button>
+<button class="button1" data-md-color-primary="purple" style="background-color:purple">purple</button>
+<button class="button1" data-md-color-primary="indigo" style="background-color:indigo">indigo</button>
+<button class="button1" data-md-color-primary="blue" style="background-color:blue">blue</button>
+<button class="button1" data-md-color-primary="cyan" style="background-color:cyan;color:black">cyan</button>
+<button class="button1" data-md-color-primary="teal" style="background-color:teal">teal</button>
+<button class="button1" data-md-color-primary="green" style="background-color:green">green</button>
+<button class="button1" data-md-color-primary="lime" style="background-color:lime;color:black">lime</button>
+<button class="button1" data-md-color-primary="orange" style="background-color:orange;color:black">orange</button>
+<button class="button1" data-md-color-primary="brown" style="background-color:brown;border-radius=3px">brown</button>
+<button class="button1" data-md-color-primary="grey" style="background-color:grey">grey</button>
+<button class="button1" data-md-color-primary="black" style="background-color:black">black</button>
+<button class="button1" data-md-color-primary="white" style="background-color:white;color:black">white</button>
+</div>
+
+<script>
+var buttons = document.querySelectorAll("button[data-md-color-primary]")
+buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+        var attr = this.getAttribute("data-md-color-primary")
+        document.body.setAttribute("data-md-color-primary", attr)
+        localStorage.setItem("data-md-color-primary",attr);
+        })
+})
+</script>
+
+<h2 ><!-- 评论 -->评论区~</h2>
+
+有用的话请给我个赞和 star => <a href="https://github.com/Tangjp-wraith/Tangjp-wraith.github.io"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Tangjp-wraith/Tangjp-wraith.github.io.svg?style=plastic&amp;label=Stars"></a>
+
+</br>
+
+快来跟我聊天~
+
+</div>
+
+<script src="https://giscus.app/client.js" data-repo="Tangjp-wraith/discussion" data-repo-id="R_kgDOLRJCPw"
+    data-category="General" data-category-id="DIC_kwDOLRJCP84CdJdO" data-mapping="pathname" data-strict="0"
+    data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="dark" data-lang="zh-CN"
+    crossorigin="anonymous" async>
+    </script>
+
+<!-- Synchronize Giscus theme with palette -->
+<script>
+var giscus = document.querySelector("script[src*=giscus]")
+
+/* Set palette on initial load */
+var palette = __md_get("__palette")
+if (palette && typeof palette.color === "object") {
+    var theme = palette.color.scheme === "slate" ? "dark" : "light"
+    giscus.setAttribute("data-theme", theme) 
+}
+
+/* Register event handlers after documented loaded */
+document.addEventListener("DOMContentLoaded", function() {
+    var ref = document.querySelector("[data-md-component=palette]")
+    ref.addEventListener("change", function() {
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+        var theme = palette.color.scheme === "slate" ? "dark" : "light"
+        localStorage.setItem("data-md-color-scheme", palette.color.scheme === "slate" ? "slate" : "default");
+        /* Instruct Giscus to change theme */
+        var frame = document.querySelector(".giscus-frame")
+        frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme } } },
+        "https://giscus.app"
+        )
+    }
+    })
+})
+</script>
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      本页面的全部内容在 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-SA 4.0</a> 和 <a href="https://github.com/zTrix/sata-license">SATA</a> 协议之条款下提供，附加条款亦可能应用
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "content.code.annotate", "navigation.indexes", "navigation.top", "toc.follow"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.081f42fc.min.js"></script>
+      
+        <script src="../../../js/timeago.min.js"></script>
+      
+        <script src="../../../js/timeago_mkdocs_material.js"></script>
+      
+        <script src="../../../from_oi_wiki/js/extra.js"></script>
+      
+        <script src="../../../js/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+      
+        <script src="../../../js/tablesort.js"></script>
+      
+        <script src="../../../termynal.js"></script>
+      
+    
+  </body>
+</html>

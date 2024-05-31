@@ -1,0 +1,2314 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://tang-jiapeng.github.io/trans/kaleidoscope/chapter2/">
+      
+      
+        <link rel="prev" href="../chapter1/">
+      
+      
+        <link rel="next" href="../chapter3/">
+      
+      
+      <link rel="icon" href="../../../logo.ico">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.25">
+    
+    
+      
+        <title>Implementing a Parser and AST - 0X10CC's notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Serif SC";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../css/timeago.css">
+    
+      <link rel="stylesheet" href="../../../from_oi_wiki/css/extra.css?v=13">
+    
+      <link rel="stylesheet" href="../../../css/status.css">
+    
+      <link rel="stylesheet" href="../../../css/neoteroi-mkdocs.css">
+    
+      <link rel="stylesheet" href="../../../termynal.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-JT9BRCXKJJ"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document$.subscribe(function(){var a=document.forms.feedback;if(void 0!==a)for(var e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}),location$.subscribe(function(e){n("config","G-JT9BRCXKJJ",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-JT9BRCXKJJ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#21-第二章简介" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="0X10CC&#39;s notes" class="md-header__button md-logo" aria-label="0X10CC's notes" data-md-component="logo">
+      
+  <img src="../../../logo.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            0X10CC's notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Implementing a Parser and AST
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/tang-jiapeng/tang-jiapeng.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tang-jiapeng.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+    
+  
+  🏡 Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cpp/" class="md-tabs__link">
+          
+  
+    
+  
+  C++
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../leetcode/" class="md-tabs__link">
+          
+  
+    
+  
+  Leetcode
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../core/" class="md-tabs__link">
+          
+  
+    
+  
+  核心知识
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+    
+  
+  文档翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="0X10CC&#39;s notes" class="md-nav__button md-logo" aria-label="0X10CC's notes" data-md-component="logo">
+      
+  <img src="../../../logo.ico" alt="logo">
+
+    </a>
+    0X10CC's notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/tang-jiapeng/tang-jiapeng.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tang-jiapeng.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../.." class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    🏡 Home
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            🏡 Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../cpp/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    C++
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            C++
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    C++零碎杂记
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            C++零碎杂记
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/%E9%A1%B6%E5%B1%82const%E4%B8%8E%E5%BA%95%E5%B1%82const/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    顶层const与底层const
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/%E5%80%BC%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    值类型与右值引用
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88%E4%B8%8E%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    数组指针与函数指针
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/C%2B%2B%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%B8%83%E5%B1%80/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    C++类对象布局
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/%E9%9B%B6%E7%A2%8E%E6%9D%82%E8%AE%B0/C%2B%2B%E4%B8%AD%E7%9A%84%E5%A4%9A%E6%80%81%E4%B8%8ERTTI/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    C++中的多态与RTTI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Effective Modern C++
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Effective Modern C++
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item1：理解模板类型推导
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item2：理解auto类型推导
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item3：理解decltype
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item7：区别使用()和{}创建对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item9：优先考虑别名声明而非typedef
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cpp/effective/item23/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    item23：理解std::move和std::forward
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../leetcode/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Leetcode
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Leetcode
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Contests
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Contests
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../leetcode/contests/393/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第 393 场周赛
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    每日一题
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            每日一题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../leetcode/daily/2024-5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2024年5月
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../core/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    核心知识
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            核心知识
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../core/nju-compiler/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NJU编译原理笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    文档翻译
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            文档翻译
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kaleidoscope
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Kaleidoscope
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kaleidoscope language and Lexer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Implementing a Parser and AST
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Implementing a Parser and AST
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21-第二章简介" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1. 第二章简介
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-抽象语法树ast" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2. 抽象语法树（AST）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-解析器基础" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3. 解析器基础
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-基本表达式解析" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4. 基本表达式解析
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-二元表达式解析" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5. 二元表达式解析
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-解析其余部分" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.6. 解析其余部分
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-驱动程序" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.7. 驱动程序
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#28-结论" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.8. 结论
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code generation to LLVM IR
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding JIT and Optimizer Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extending the Language：Control Flow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extending the Language：User-defined Operators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extending the Language：Mutable Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compiling to Object Files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Debug Information
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter10/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Conclusion and other tidbits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21-第二章简介" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1. 第二章简介
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-抽象语法树ast" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2. 抽象语法树（AST）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-解析器基础" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3. 解析器基础
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-基本表达式解析" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4. 基本表达式解析
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-二元表达式解析" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5. 二元表达式解析
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-解析其余部分" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.6. 解析其余部分
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-驱动程序" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.7. 驱动程序
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#28-结论" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.8. 结论
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Implementing a Parser and AST</h1>
+
+<div style="margin-top: -30px; font-size: 0.75em; opacity: 0.7;">
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10h-2a8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8V2m6.78 1a.69.69 0 0 0-.48.2l-1.22 1.21 2.5 2.5L20.8 5.7c.26-.26.26-.7 0-.95L19.25 3.2c-.13-.13-.3-.2-.47-.2m-2.41 2.12L9 12.5V15h2.5l7.37-7.38-2.5-2.5Z"/></svg></span> 约 3919 个字 <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3l89.3 89.4-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/></svg></span> 299 行代码 <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20c4.42 0 8-3.58 8-8s-3.58-8-8-8-8 3.58-8 8 3.58 8 8 8m0-18c5.5 0 10 4.5 10 10s-4.5 10-10 10C6.47 22 2 17.5 2 12S6.5 2 12 2m.5 11H11V7h1.5v4.26l3.7-2.13.75 1.3L12.5 13Z"/></svg></span> 预计阅读时间 17 分钟</p>
+</div>
+<h2 id="21-第二章简介">2.1. 第二章简介<a class="headerlink" href="#21-第二章简介" title="Permanent link">&para;</a></h2>
+<p>欢迎阅读“使用LLVM实现语言”教程的第二章。本章将向您展示如何使用第一章构建的词法分析器，来为我们的Kaleidoscope语言构建一个完整的解析器。一旦我们有了解析器，我们将定义并构建一个抽象语法树（AST）。</p>
+<p>我们将构建的解析器使用递归下降解析和运算符优先级解析的组合来解析Kaleidoscope语言（后者用于解析二元表达式，前者用于解析其他所有内容）。在开始解析之前，我们先来谈谈解析器的输出：抽象语法树。</p>
+<h2 id="22-抽象语法树ast">2.2. 抽象语法树（AST）<a class="headerlink" href="#22-抽象语法树ast" title="Permanent link">&para;</a></h2>
+<p>程序的AST以一种便于编译器后续阶段（如代码生成）解释的方式捕捉其行为。我们基本上希望为语言中的每个结构都有一个对象，并且AST应该紧密地模拟语言。在Kaleidoscope中，我们有表达式、原型和函数对象。我们先从表达式开始：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// ExprAST - 所有表达式节点的基类。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExprAST</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ExprAST</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">/// NumberExprAST - 用于数字字面量（如&quot;1.0&quot;）的表达式类。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NumberExprAST</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExprAST</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">Val</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">NumberExprAST</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">Val</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Val</span><span class="p">(</span><span class="n">Val</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>上面的代码展示了基类ExprAST和我们用于数字字面量的一个子类的定义。需要注意的是，NumberExprAST类将字面量的数值作为实例变量捕捉。这使得编译器的后续阶段能够知道存储的数值是多少。</p>
+<p>现在我们只是创建AST，因此没有有用的访问器方法。很容易添加一个虚方法来漂亮地打印代码，例如。以下是我们在Kaleidoscope语言的基本形式中将使用的其他表达式AST节点定义：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// VariableExprAST - 用于引用变量的表达式类，如&quot;a&quot;。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VariableExprAST</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExprAST</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">VariableExprAST</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Name</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">Name</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="c1">/// BinaryExprAST - 用于二元运算符的表达式类。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinaryExprAST</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExprAST</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">Op</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LHS</span><span class="p">,</span><span class="w"> </span><span class="n">RHS</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">BinaryExprAST</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">Op</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LHS</span><span class="p">,</span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RHS</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="n">Op</span><span class="p">),</span><span class="w"> </span><span class="n">LHS</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">LHS</span><span class="p">)),</span><span class="w"> </span><span class="n">RHS</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">RHS</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="c1">/// CallExprAST - 用于函数调用的表达式类。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CallExprAST</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExprAST</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Callee</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Args</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">CallExprAST</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Callee</span><span class="p">,</span>
+<span class="w">              </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Args</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">Callee</span><span class="p">(</span><span class="n">Callee</span><span class="p">),</span><span class="w"> </span><span class="n">Args</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Args</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>这部分代码相对直截了当：变量捕捉变量名，二元运算符捕捉它们的操作码（例如'+'），函数调用捕捉函数名以及任何参数表达式的列表。我们的AST的一大优点是它捕捉了语言特性，而没有讨论语言的语法结构。注意，这里没有关于二元运算符的优先级、词法结构等的讨论。</p>
+<p>对于我们的基本语言，这些是我们定义的所有表达式节点。因为它没有条件控制流，所以它不是图灵完备的；我们将在后续章节中解决这个问题。接下来我们需要的是一种方式来描述函数的接口，以及描述函数本身：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// PrototypeAST - 该类表示函数的&quot;原型&quot;，</span>
+<span class="c1">/// 它捕捉函数名及其参数名（因此隐式地表示了函数的参数数量）。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrototypeAST</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Args</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">PrototypeAST</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Name</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Args</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">Name</span><span class="p">),</span><span class="w"> </span><span class="n">Args</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Args</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">getName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">/// FunctionAST - 该类表示函数定义本身。</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionAST</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Proto</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Body</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">FunctionAST</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Proto</span><span class="p">,</span>
+<span class="w">              </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Body</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">Proto</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Proto</span><span class="p">)),</span><span class="w"> </span><span class="n">Body</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Body</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>在Kaleidoscope中，函数类型仅由其参数的数量决定。由于所有值都是双精度浮点数，因此不需要在任何地方存储每个参数的类型。在一个更激进和现实的语言中，ExprAST类可能会有一个类型字段。</p>
+<p>有了这些支撑结构，我们现在可以讨论在Kaleidoscope中解析表达式和函数体。</p>
+<h2 id="23-解析器基础">2.3. 解析器基础<a class="headerlink" href="#23-解析器基础" title="Permanent link">&para;</a></h2>
+<p>现在我们有了要构建的AST，我们需要定义解析器代码来构建它。我们的目标是解析类似“x+y”的字符串（由词法分析器返回为三个标记）成一个可以通过以下调用生成的AST：</p>
+<div class="highlight"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">LHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">VariableExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">RHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">VariableExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">BinaryExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="sc">&#39;+&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">LHS</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">RHS</span><span class="p">));</span>
+</code></pre></div>
+<p>为了实现这一点，我们将从定义一些基本的辅助例程开始：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// CurTok/getNextToken - 提供一个简单的标记缓冲区。CurTok是解析器正在查看的当前标记。</span>
+<span class="c1">/// getNextToken从词法分析器读取另一个标记，并使用结果更新CurTok。</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">CurTok</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">getNextToken</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">CurTok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gettok</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这实现了围绕词法分析器的一个简单的标记缓冲区。这使我们可以提前查看词法分析器返回的标记。我们解析器中的每个函数都会假设CurTok是当前需要解析的标记。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// LogError* - 这些是用于错误处理的小帮助函数。</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LogError</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">Str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Error: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Str</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LogErrorP</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">Str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">LogError</span><span class="p">(</span><span class="n">Str</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>LogError例程是我们的解析器用来处理错误的简单帮助例程。我们解析器中的错误恢复不是最好的，并且对用户不特别友好，但对于我们的教程来说已经足够了。这些例程使在具有各种返回类型的例程中更容易处理错误：它们总是返回空。</p>
+<p>有了这些基本的帮助函数，我们可以实现我们的语法的第一个部分：数字字面量。</p>
+<h2 id="24-基本表达式解析">2.4. 基本表达式解析<a class="headerlink" href="#24-基本表达式解析" title="Permanent link">&para;</a></h2>
+<p>我们从数字字面量开始，因为它们是最简单的处理。对于语法中的每个产生式，我们将定义一个解析该产生式的函数。对于数字字面量，我们有：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// numberexpr ::= number</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseNumberExpr</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">Result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">NumberExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">NumVal</span><span class="p">);</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w"> </span><span class="c1">// 消耗数字</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Result</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这个例程非常简单：它预计在当前标记是tok_number标记时被调用。它获取当前的数字值，创建一个NumberExprAST节点，推进词法分析器到下一个标记，最后返回。</p>
+<p>其中有一些有趣的方面。最重要的一点是，这个例程会吃掉所有对应于产生式的标记，并返回带有下一个标记（不属于语法产生式）的词法分析器缓冲区。这是递归下降解析器的一种相当标准的方法。为了更好地例示，括号运算符定义如下：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// parenexpr ::= &#39;(&#39; expression &#39;)&#39;</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseParenExpr</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w"> </span><span class="c1">// 吃掉(.</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">V</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParseExpression</span><span class="p">();</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">V</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;)&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LogError</span><span class="p">(</span><span class="s">&quot;expected &#39;)&#39;&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w"> </span><span class="c1">// 吃掉).</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">V</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这个函数展示了解析器的一些有趣之处：</p>
+<p>1）它展示了我们如何使用LogError例程。调用时，该函数期望当前标记是'('标记，但在解析子表达式后，可能没有')'等待。例如，如果用户输入“(4 x”而不是“(4)”，解析器应该发出错误。因为错误可能会发生，解析器需要一种方式来表示它们发生了：在我们的解析器中，错误时返回null。</p>
+<p>2）另一个有趣的方面是它使用了递归，调用ParseExpression（我们很快会看到ParseExpression可以调用ParseParenExpr）。这很强大，因为它允许我们处理递归语法，并保持每个产生式非常简单。注意，括号本身并不会构造AST节点。虽然我们可以这样</p>
+<p>做，但括号的最重要作用是引导解析器并提供分组。一旦解析器构建了AST，括号就不再需要了。</p>
+<p>下一个简单的产生式是处理变量引用和函数调用：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// identifierexpr</span>
+<span class="c1">///   ::= identifier</span>
+<span class="c1">///   ::= identifier &#39;(&#39; expression* &#39;)&#39;</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseIdentifierExpr</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">IdName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IdentifierStr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w">  </span><span class="c1">// 吃掉标识符。</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;(&#39;</span><span class="p">)</span><span class="w"> </span><span class="c1">// 简单变量引用。</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">VariableExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">IdName</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// 调用。</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w">  </span><span class="c1">// 吃掉(</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Args</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;)&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">Arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParseExpression</span><span class="p">())</span>
+<span class="w">        </span><span class="n">Args</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Arg</span><span class="p">));</span>
+<span class="w">      </span><span class="k">else</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;)&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;,&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">LogError</span><span class="p">(</span><span class="s">&quot;Expected &#39;)&#39; or &#39;,&#39; in argument list&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">getNextToken</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// 吃掉&#39;)&#39;。</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">CallExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">IdName</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Args</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这个例程遵循与其他例程相同的风格。（它期望在当前标记是tok_identifier标记时被调用）。它也有递归和错误处理。一个有趣的方面是它使用前瞻来确定当前标识符是一个独立的变量引用还是一个函数调用表达式。它通过检查标识符之后的标记是否为'('标记来处理这个问题，适当地构造一个VariableExprAST或CallExprAST节点。</p>
+<p>现在我们已经有了所有简单的表达式解析逻辑，我们可以定义一个帮助函数将其整合为一个入口点。我们将这一类表达式称为“基本”表达式，原因将在教程后面更加清楚。为了解析一个任意的基本表达式，我们需要确定它是哪种表达式：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// primary</span>
+<span class="c1">///   ::= identifierexpr</span>
+<span class="c1">///   ::= numberexpr</span>
+<span class="c1">///   ::= parenexpr</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParsePrimary</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">default</span><span class="o">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LogError</span><span class="p">(</span><span class="s">&quot;unknown token when expecting an expression&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">tok_identifier</span><span class="p">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ParseIdentifierExpr</span><span class="p">();</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">tok_number</span><span class="p">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ParseNumberExpr</span><span class="p">();</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="sc">&#39;(&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ParseParenExpr</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>看到这个函数的定义后，为什么我们可以假设各个函数中的CurTok状态就变得更加明显了。这个函数使用前瞻来确定正在检查的是哪种表达式，然后通过函数调用来解析它。</p>
+<p>现在基本表达式已经处理完毕，我们需要处理二元表达式。它们稍微复杂一些。</p>
+<h2 id="25-二元表达式解析">2.5. 二元表达式解析<a class="headerlink" href="#25-二元表达式解析" title="Permanent link">&para;</a></h2>
+<p>二元表达式更难解析，因为它们通常是模棱两可的。例如，给定字符串“x+y*z”，解析器可以选择将其解析为“(x+y)*z”或“x+(y*z)”。根据数学中的常见定义，我们期望后者解析，因为“*”（乘法）优先于“+”（加法）。</p>
+<p>有很多方法可以处理这个问题，但一种优雅而高效的方法是使用运算符优先级解析。这种解析技术使用二元运算符的优先级来指导递归。首先，我们需要一个优先级表：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// BinopPrecedence - 这包含了定义的每个二元运算符的优先级。</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">BinopPrecedence</span><span class="p">;</span>
+
+<span class="c1">/// GetTokPrecedence - 获取挂起的二元运算符标记的优先级。</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetTokPrecedence</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isascii</span><span class="p">(</span><span class="n">CurTok</span><span class="p">))</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// 确保这是一个已声明的二元运算符。</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">TokPrec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BinopPrecedence</span><span class="p">[</span><span class="n">CurTok</span><span class="p">];</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">TokPrec</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">TokPrec</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 安装标准二元运算符。</span>
+<span class="w">  </span><span class="c1">// 1是最低优先级。</span>
+<span class="w">  </span><span class="n">BinopPrecedence</span><span class="p">[</span><span class="sc">&#39;&lt;&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+<span class="w">  </span><span class="n">BinopPrecedence</span><span class="p">[</span><span class="sc">&#39;+&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+<span class="w">  </span><span class="n">BinopPrecedence</span><span class="p">[</span><span class="sc">&#39;-&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+<span class="w">  </span><span class="n">BinopPrecedence</span><span class="p">[</span><span class="sc">&#39;*&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="p">;</span><span class="w">  </span><span class="c1">// 最高。</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>对于Kaleidoscope的基本形式，我们只支持4个二元运算符（显然可以由您来扩展，我们勇敢无畏的读者）。GetTokPrecedence函数返回当前标记的优先级，如果标记不是二元运算符，则返回-1。拥有一个映射使得添加新运算符变得容易，并且明确了算法不依赖于所涉及的具体运算符，但消除映射并在GetTokPrecedence函数中进行比较也很容易。（或者只是使用一个固定大小的数组）。</p>
+<p>有了上面的帮助函数定义，我们现在可以开始解析二元表达式了。运算符优先级解析的基本思想是将一个可能有歧义的二元运算符表达式分解成部分。考虑例如表达式“a+b+(c+d)<em>e*f+g”。运算符优先级解析将其视为由二元运算符分隔的一串基本表达式。因此，它将首先解析前导基本表达式“a”，然后它将看到[+, b] [+, (c+d)] [</em>, e] [*, f]和[+, g]对。注意，因为括号是基本表达式，二元表达式解析器根本不需要担心嵌套子表达式如(c+d)。</p>
+<p>首先，一个表达式是一个基本表达式，后面可能跟着一系列[binop,基本expr]对：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// expression</span>
+<span class="c1">///   ::= primary binoprhs</span>
+<span class="c1">///</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseExpression</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">LHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParsePrimary</span><span class="p">();</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">LHS</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ParseBinOpRHS</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">LHS</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>ParseBinOpRHS是为我们解析这对序列的函数。它接受一个优先级和一个指向到目前为止解析的部分的表达式的指针。注意“x”是一个完全有效的表达式：因此，“binoprhs”可以为空，在这种情况下它返回传入的表达式。在上面的例子中，代码传递“a”的表达式到ParseBinOpRHS，并且当前标记是“+”。</p>
+<p>传递给ParseBinOpRHS的优先级值表示函数被允许吃掉的最小运算符优先级。例如，如果当前对流是[+, x]并且ParseBinOpRHS被传递了一个优先级为40的值，它将不会消耗任何标记（因为‘+’的优先级只有20）。考虑到这一点，ParseBinOpRHS从以下开始：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// binoprhs</span>
+<span class="c1">///   ::= (&#39;+&#39; primary)*</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseBinOpRHS</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ExprPrec</span><span class="p">,</span>
+<span class="w">                                              </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ExprAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LHS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// 如果这是一个二元运算符，找到它的优先级。</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">TokPrec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetTokPrecedence</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 如果这是一个优先级至少与当前二元运算符绑定的二元运算符，</span>
+<span class="w">    </span><span class="c1">// 消耗它，否则我们就完成了。</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">TokPrec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ExprPrec</span><span class="p">)</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">LHS</span><span class="p">;</span>
+</code></pre></div>
+<p>这段代码获取当前标记的优先级，并检查它是否太低。由于我们定义无效标记的优先级为-1，这个检查隐式地知道当标记流中的二元运算符用尽时，对流结束。如果这个检查成功，我们知道该标记是一个二元运算符，并且它将包含在这个表达式中：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 好的，我们知道这是一个二元运算符。</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">BinOp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CurTok</span><span class="p">;</span>
+<span class="n">getNextToken</span><span class="p">();</span><span class="w">  </span><span class="c1">// 吃掉二元运算符</span>
+
+<span class="c1">// 解析二元运算符后的基本表达式。</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">RHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParsePrimary</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">RHS</span><span class="p">)</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+</code></pre></div>
+<p>这样，这段代码吃掉（并记住）二元运算符，然后解析后面的基本表达式。这建立了整个对，第一个对是[+, b]，对于运行中的例子。</p>
+<p>现在我们解析了表达式的左边部分和一对RHS序列，我们必须决定表达式的结合方式。特别是，我们可以有“(a+b) binop 未解析”或“a + (b binop 未解析)”。为此，我们查看“binop”的优先级并将其与BinOp的优先级（在这种情况下是‘+’）进行比较：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 如果BinOp与RHS的绑定不如RHS后的运算符紧密，让</span>
+<span class="c1">// 挂起的运算符将RHS作为其LHS。</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">NextPrec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetTokPrecedence</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">TokPrec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NextPrec</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</code></pre></div>
+<p>如果右边的binop的优先级低于或等于我们当前解析的运算符的优先级，那么</p>
+<p>我们知道括号的结合方式为“(a+b) binop …”。在我们的例子中，当前运算符是“+”，下一个运算符是“+”，我们知道它们具有相同的优先级。在这种情况下，我们将创建“a+b”的AST节点，然后继续解析：</p>
+<div class="highlight"><pre><span></span><code><span class="w">      </span><span class="p">...</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="n">omitted</span><span class="w"> </span><span class="p">...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 合并LHS/RHS。</span>
+<span class="w">    </span><span class="n">LHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">BinaryExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">BinOp</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">LHS</span><span class="p">),</span>
+<span class="w">                                           </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">RHS</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// 循环回到while循环的顶部。</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>在上面的例子中，这将把“a+b+”变成“(a+b)”并执行while循环的下一次迭代，将“+”作为当前标记。上面的代码将吃掉，记住，并解析“(c+d)”作为基本表达式，这使当前对等于[+, (c+d)]。然后它将评估带有“<em>”作为基本右边运算符的if条件。在这种情况下，“</em>”的优先级高于“+”的优先级，因此if条件将被进入。</p>
+<p>剩下的关键问题是“if条件如何解析完整的右边表达式”？特别是，为了正确地构建我们的例子的AST，它需要将所有的“(c+d)*e*f”作为RHS表达式变量。这样做的代码出奇地简单（上面两个代码块的代码为了上下文重复）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 如果BinOp与RHS的绑定不如RHS后的运算符紧密，让</span>
+<span class="c1">// 挂起的运算符将RHS作为其LHS。</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">NextPrec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetTokPrecedence</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">TokPrec</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NextPrec</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">RHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParseBinOpRHS</span><span class="p">(</span><span class="n">TokPrec</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">RHS</span><span class="p">));</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">RHS</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// 合并LHS/RHS。</span>
+<span class="n">LHS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">BinaryExprAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">BinOp</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">LHS</span><span class="p">),</span>
+<span class="w">                                       </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">RHS</span><span class="p">));</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// 循环回到while循环的顶部。</span>
+</code></pre></div>
+<p>在这一点上，我们知道右边的二元运算符的优先级高于我们当前正在解析的binop。因此，我们知道任何运算符优先级高于“+”的对序列应该一起解析并返回为“RHS”。为此，我们递归调用ParseBinOpRHS函数，指定“TokPrec+1”作为其继续的最小优先级。在上面的例子中，这将导致其返回“(c+d)*e*f”的AST节点作为RHS，然后将其设置为‘+’表达式的RHS。</p>
+<p>最后，在while循环的下一次迭代中，“+g”部分被解析并添加到AST。通过这14行非平凡代码，我们正确地处理了完全通用的二元表达式解析。这个代码非常细微，需要仔细理解。我建议用一些复杂的例子运行它，以了解它的工作原理。</p>
+<p>这就完成了表达式的处理。到此为止，我们可以将解析器指向一个任意的标记流，并从中构建一个表达式，停在第一个不属于表达式的标记处。接下来，我们需要处理函数定义等。</p>
+<h2 id="26-解析其余部分">2.6. 解析其余部分<a class="headerlink" href="#26-解析其余部分" title="Permanent link">&para;</a></h2>
+<p>接下来缺少的是函数原型的处理。在Kaleidoscope中，它们既用于'extern'函数声明，也用于函数体定义。处理这段代码是直截了当的，不是很有趣（当你已经处理了表达式）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// prototype</span>
+<span class="c1">///   ::= id &#39;(&#39; id* &#39;)&#39;</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParsePrototype</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">tok_identifier</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LogErrorP</span><span class="p">(</span><span class="s">&quot;Expected function name in prototype&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FnName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IdentifierStr</span><span class="p">;</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;(&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LogErrorP</span><span class="p">(</span><span class="s">&quot;Expected &#39;(&#39; in prototype&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// 读取参数名列表。</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ArgNames</span><span class="p">;</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">getNextToken</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">tok_identifier</span><span class="p">)</span>
+<span class="w">    </span><span class="n">ArgNames</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">IdentifierStr</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;)&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LogErrorP</span><span class="p">(</span><span class="s">&quot;Expected &#39;)&#39; in prototype&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// 成功。</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w">  </span><span class="c1">// 吃掉&#39;)&#39;。</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">FnName</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ArgNames</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>有了这些，一个函数定义就非常简单了，只需一个原型加上一个实现主体的表达式：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// definition ::= &#39;def&#39; prototype expression</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">FunctionAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseDefinition</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w">  </span><span class="c1">// 吃掉def。</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">Proto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParsePrototype</span><span class="p">();</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">Proto</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">E</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParseExpression</span><span class="p">())</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">FunctionAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Proto</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">E</span><span class="p">));</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>此外，我们支持'extern'来声明诸如'sin'和'cos'的函数，并支持用户函数的前向声明。这些'extern'只是没有主体的原型：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// external ::= &#39;extern&#39; prototype</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseExtern</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">getNextToken</span><span class="p">();</span><span class="w">  </span><span class="c1">// 吃掉extern。</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">ParsePrototype</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>最后，我们还允许用户输入任意顶级表达式并即时评估。我们通过定义匿名的无参（零参数）函数来处理这一点：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// toplevelexpr ::= expression</span>
+<span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">FunctionAST</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseTopLevelExpr</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">E</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParseExpression</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 创建一个匿名原型。</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">Proto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">PrototypeAST</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">FunctionAST</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Proto</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">E</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>现在我们有了所有的部分，让我们构建一个小的驱动程序，让我们实际执行我们构建的代码！</p>
+<h2 id="27-驱动程序">2.7. 驱动程序<a class="headerlink" href="#27-驱动程序" title="Permanent link">&para;</a></h2>
+<p>驱动程序简单地调用所有的解析部分，并带有一个顶级调度循环。这里没有太多有趣的地方，所以我只包括顶级循环。完整代码见“顶级解析”部分。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// top ::= definition | external | expression | &#39;;&#39;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">MainLoop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ready&gt; &quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">CurTok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">tok_eof</span><span class="p">:</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="sc">&#39;;&#39;</span><span class="p">:</span><span class="w"> </span><span class="c1">// 忽略顶级分号。</span>
+<span class="w">      </span><span class="n">getNextToken</span><span class="p">();</span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">tok_def</span><span class="p">:</span>
+<span class="w">      </span><span class="n">HandleDefinition</span><span class="p">();</span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">tok_extern</span><span class="p">:</span>
+<span class="w">      </span><span class="n">HandleExtern</span><span class="p">();</span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">      </span><span class="n">HandleTopLevelExpression</span><span class="p">();</span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>最有趣的部分是我们忽略了顶级分号。为什么会这样，你问？基本原因是如果你在命令行中输入“4 + 5”，解析器不知道这是你输入的结尾还是不是。例如，在下一行你可以输入“def foo…”，在这种情况下4+5是一个顶级表达式的结尾。或者你可以输入“* 6”，这会继续表达式。使用顶级分号允许你输入“4+5;”，解析器会知道你完成了。</p>
+<h2 id="28-结论">2.8. 结论<a class="headerlink" href="#28-结论" title="Permanent link">&para;</a></h2>
+<p>在不到400行带注释的代码（240行非注释、非空白代码）中，我们完全定义了我们的最小语言，包括一个词法分析器、解析器和AST构建器。完成这些后，可执行文件将验证Kaleidoscope代码，并告诉我们它是否在语法上无效。例如，这里是一个示例交互：</p>
+<div class="highlight"><pre><span></span><code>$ ./a.out
+ready&gt; def foo(x y) x+foo(y, 4.0);
+Parsed a function definition.
+ready&gt; def foo(x y) x+y y;
+Parsed a function definition.
+Parsed a top-level expr
+ready&gt; def foo(x y) x+y );
+Parsed a function definition.
+Error: unknown token when expecting an expression
+ready&gt; extern sin(a);
+ready&gt; Parsed an extern
+ready&gt; ^D
+$
+</code></pre></div>
+<p>这里有很大的扩展空间。你可以定义新的AST节点，以多种方式扩展语言等。在下一章中，我们将介绍如何从AST生成LLVM中间表示（IR）。</p>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最后更新">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-05-31T07:58:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-31</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="创建日期">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2Z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-05-31T07:58:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-31</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+<div id="__comments">
+
+<h3>颜色主题调整</h3>
+
+<!-- <div class="tx-switch">
+<button data-md-color-scheme="default"><code>default</code></button>
+<button data-md-color-scheme="slate"><code>slate</code></button>
+</div>
+
+<script>
+var buttons = document.querySelectorAll("button[data-md-color-scheme]")
+buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+        var attr = this.getAttribute("data-md-color-scheme")
+        document.body.setAttribute("data-md-color-scheme", attr)
+        localStorage.setItem("data-md-color-scheme",attr);
+        updateScheme();
+        })
+})
+</script> -->
+
+<div class="tx-switch">
+<button class="button1" data-md-color-primary="red" style="background-color:red">red</button>
+<button class="button1" data-md-color-primary="pink" style="background-color:pink;color:black">pink</button>
+<button class="button1" data-md-color-primary="purple" style="background-color:purple">purple</button>
+<button class="button1" data-md-color-primary="indigo" style="background-color:indigo">indigo</button>
+<button class="button1" data-md-color-primary="blue" style="background-color:blue">blue</button>
+<button class="button1" data-md-color-primary="cyan" style="background-color:cyan;color:black">cyan</button>
+<button class="button1" data-md-color-primary="teal" style="background-color:teal">teal</button>
+<button class="button1" data-md-color-primary="green" style="background-color:green">green</button>
+<button class="button1" data-md-color-primary="lime" style="background-color:lime;color:black">lime</button>
+<button class="button1" data-md-color-primary="orange" style="background-color:orange;color:black">orange</button>
+<button class="button1" data-md-color-primary="brown" style="background-color:brown;border-radius=3px">brown</button>
+<button class="button1" data-md-color-primary="grey" style="background-color:grey">grey</button>
+<button class="button1" data-md-color-primary="black" style="background-color:black">black</button>
+<button class="button1" data-md-color-primary="white" style="background-color:white;color:black">white</button>
+</div>
+
+<script>
+var buttons = document.querySelectorAll("button[data-md-color-primary]")
+buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+        var attr = this.getAttribute("data-md-color-primary")
+        document.body.setAttribute("data-md-color-primary", attr)
+        localStorage.setItem("data-md-color-primary",attr);
+        })
+})
+</script>
+
+<h2 ><!-- 评论 -->评论区~</h2>
+
+有用的话请给我个赞和 star => <a href="https://github.com/Tangjp-wraith/Tangjp-wraith.github.io"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Tangjp-wraith/Tangjp-wraith.github.io.svg?style=plastic&amp;label=Stars"></a>
+
+</br>
+
+快来跟我聊天~
+
+</div>
+
+<script src="https://giscus.app/client.js" data-repo="Tangjp-wraith/discussion" data-repo-id="R_kgDOLRJCPw"
+    data-category="General" data-category-id="DIC_kwDOLRJCP84CdJdO" data-mapping="pathname" data-strict="0"
+    data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="dark" data-lang="zh-CN"
+    crossorigin="anonymous" async>
+    </script>
+
+<!-- Synchronize Giscus theme with palette -->
+<script>
+var giscus = document.querySelector("script[src*=giscus]")
+
+/* Set palette on initial load */
+var palette = __md_get("__palette")
+if (palette && typeof palette.color === "object") {
+    var theme = palette.color.scheme === "slate" ? "dark" : "light"
+    giscus.setAttribute("data-theme", theme) 
+}
+
+/* Register event handlers after documented loaded */
+document.addEventListener("DOMContentLoaded", function() {
+    var ref = document.querySelector("[data-md-component=palette]")
+    ref.addEventListener("change", function() {
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+        var theme = palette.color.scheme === "slate" ? "dark" : "light"
+        localStorage.setItem("data-md-color-scheme", palette.color.scheme === "slate" ? "slate" : "default");
+        /* Instruct Giscus to change theme */
+        var frame = document.querySelector(".giscus-frame")
+        frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme } } },
+        "https://giscus.app"
+        )
+    }
+    })
+})
+</script>
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      本页面的全部内容在 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-SA 4.0</a> 和 <a href="https://github.com/zTrix/sata-license">SATA</a> 协议之条款下提供，附加条款亦可能应用
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "content.code.annotate", "navigation.indexes", "navigation.top", "toc.follow"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.081f42fc.min.js"></script>
+      
+        <script src="../../../js/timeago.min.js"></script>
+      
+        <script src="../../../js/timeago_mkdocs_material.js"></script>
+      
+        <script src="../../../from_oi_wiki/js/extra.js"></script>
+      
+        <script src="../../../js/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+      
+        <script src="../../../js/tablesort.js"></script>
+      
+        <script src="../../../termynal.js"></script>
+      
+    
+  </body>
+</html>
